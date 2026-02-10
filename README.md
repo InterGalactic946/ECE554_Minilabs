@@ -1,2 +1,2 @@
-# ECE554
-Digital Logic Design Capstone Course
+# ECE554_Minilabs
+Digital Logic Design Capstone Course Minilabs
