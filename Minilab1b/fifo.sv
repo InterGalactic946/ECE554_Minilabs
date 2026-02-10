@@ -23,62 +23,63 @@ module FIFO
 );
 
 // Instatiate FIFO_ip module to use the FIFO IP core provided by Altera.
-// FIFO_ip FIFO_inst (
-//   .aclr(!rst_n),
-//   .data(i_data),
-//   .rdclk(clk),
-//   .rdreq(rden),
-//   .wrclk(clk),
-//   .wrreq(wren),
-//   .q(o_data),
-//   .wrfull(full),
-//   .rdempty(empty)
-// );
+FIFO_ip FIFO_inst (
+  .aclr(!rst_n),
+  .data(i_data),
+  .rdclk(clk),
+  .rdreq(rden),
+  .wrclk(clk),
+  .wrreq(wren),
+  .q(o_data),
+  .wrfull(full),
+  .rdempty(empty)
+);
 
-// Use the internal implementation of FIFO instead of the IP core.
-// Internal signals
-logic [DATA_WIDTH-1:0] mem [0:DEPTH-1];
-logic [$clog2(DEPTH):0] rd_ptr, wr_ptr, size;
-logic [DATA_WIDTH-1:0] o_data_reg;
+// // Use the internal implementation of FIFO instead of the IP core.
+// // Internal signals
+// logic [DATA_WIDTH-1:0] mem [0:DEPTH-1];
+// logic [$clog2(DEPTH):0] rd_ptr, wr_ptr, size;
+// logic [DATA_WIDTH-1:0] o_data_reg;
 
-// Read pointer logic
-always_ff @(posedge clk or negedge rst_n) begin
-  if (!rst_n)
-    rd_ptr <= '0;
-  else if (rden && !empty)
-    rd_ptr <= rd_ptr + 1;
-end
+// // Read pointer logic
+// always_ff @(posedge clk or negedge rst_n) begin
+//   if (!rst_n)
+//     rd_ptr <= '0;
+//   else if (rden && !empty)
+//     rd_ptr <= rd_ptr + 1;
+// end
 
-// Write pointer logic
-always_ff @(posedge clk or negedge rst_n) begin
-  if (!rst_n)
-    wr_ptr <= '0;
-  else if (wren && !full)
-    wr_ptr <= wr_ptr + 1;
-end
+// // Write pointer logic
+// always_ff @(posedge clk or negedge rst_n) begin
+//   if (!rst_n)
+//     wr_ptr <= '0;
+//   else if (wren && !full)
+//     wr_ptr <= wr_ptr + 1;
+// end
 
-// Write operation whenever wren is high.
-always_ff @(posedge clk or negedge rst_n) begin
-  if (!rst_n)
-    mem <= '{default: '0};
-  else if (wren)
-    mem[wr_ptr] <= i_data;
-end
+// // Write operation whenever wren is high.
+// always_ff @(posedge clk or negedge rst_n) begin
+//   if (!rst_n)
+//     mem <= '{default: '0};
+//   else if (wren)
+//     mem[wr_ptr] <= i_data;
+// end
 
-// Read operation whenever rden is high.
-always_ff @(posedge clk or negedge rst_n) begin
-  if (!rst_n)
-    o_data_reg <= '0;
-  else if (rden)
-    o_data_reg <= mem[rd_ptr];
-end
+// // Read operation whenever rden is high.
+// always_ff @(posedge clk or negedge rst_n) begin
+//   if (!rst_n)
+//     o_data_reg <= '0;
+//   else if (rden)
+//     o_data_reg <= mem[rd_ptr];
+// end
 
-// Size logic
-assign size = wr_ptr - rd_ptr;
+// // Size logic
+// assign size = wr_ptr - rd_ptr;
 
-// Pass the outputs.
-assign full  = (size == DEPTH);
-assign empty = (size == 0);
-assign o_data = o_data_reg;
+// // Pass the outputs.
+// assign full  = (size == DEPTH);
+// assign empty = (size == 0);
+// assign o_data = o_data_reg;
+
 
 endmodule
