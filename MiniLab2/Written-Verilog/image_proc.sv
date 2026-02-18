@@ -1,3 +1,10 @@
+//------------------------------------------------------------------------------
+// image_proc.sv
+// Top-level image processing module combining grayscale conversion and convolution.
+// Converts Bayer-pattern input to grayscale, then applies optional edge detection.
+// Supports passthrough grayscale or horizontal/vertical Sobel filtering via switches.
+// Outputs processed pixel stream to RGB channels with corresponding data valid signal.
+//------------------------------------------------------------------------------
 module image_proc(	oRed,
 				oGreen,
 				oBlue,
@@ -26,7 +33,8 @@ module image_proc(	oRed,
     output			oDVAL;
 
 	////////////////////////////////////////////////////
-	
+
+	// Internal signals.
 	logic [11:0] grayscale_conv_out;
     logic grayscale_conv_dval;
     logic signed [17:0] oGray;
