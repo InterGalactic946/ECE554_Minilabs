@@ -86,6 +86,7 @@ module convolution (
                             .taps1x(mDATA_1),
                             .taps2x(mDATA_0)	);
 
+	// Used for performing the convolution.
     always@(posedge iCLK or negedge iRST)
     begin
         if(!iRST)
