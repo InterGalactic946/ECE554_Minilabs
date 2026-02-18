@@ -1,3 +1,10 @@
+//------------------------------------------------------------------------------
+// convolution.sv 
+// Performs 3x3 convolution on a streaming grayscale pixel input using a line buffer.
+// Supports horizontal and vertical Sobel edge detection or passthrough grayscale.
+// Filter selection controlled by gray_en (passthrough) and horz_en (orientation).
+// Outputs the filtered pixel stream with corresponding data valid signal.
+//------------------------------------------------------------------------------
 module convolution (	
                 oGray,
 				oDVAL,
@@ -19,7 +26,7 @@ module convolution (
     output          oDVAL;
     output	[17:0]	oGray;
 
-    // Hold three elements from three rows at a time to perform convolution with a 3x3 filter 
+    // Hold three elements from three rows at a time to perform convolution with a 3x3 filter. 
     wire [11:0]	mDATA_0;
     wire [11:0]	mDATA_1;
     wire [11:0]	mDATA_2;
@@ -30,9 +37,11 @@ module convolution (
     reg	 [11:0]	mDATAdd_1;
     reg	 [11:0]	mDATAdd_2;
 
+	// Convolution data outputs.
     reg	 [17:0]	mGray;
     reg			mDVAL;
 
+	// Output the required data from this module.
     assign	oDVAL	=	mDVAL;
     assign  oGray   =   mGray;
 
@@ -43,29 +52,33 @@ module convolution (
 
     logic signed [2:0] filt[0:2][0:2];
 
-    // Output is grayscale if SW[1] is high, otherwise the edge detector filter is selected by SW[2]
+	// Output is grayscale if SW[1] is high, otherwise the edge detector filter is selected by SW[2].
     assign filt = gray_en ?  filt3
                           : (horz_en ? filt2 
                                      : filt1);
-    
+	
+    // Horizontal edge detection Sobel kernel matrix.
     assign filt1 = '{
         '{-3'sd1, 3'sd0, 3'sd1},
         '{-3'sd2, 3'sd0, 3'sd2},
         '{-3'sd1, 3'sd0, 3'sd1}
     };
 
+	// Vertical edge detection Sobel kernel matrix.
     assign filt2 = '{
         '{-3'sd1, -3'sd2, -3'sd1},
         '{3'sd0, 3'sd0, 3'sd0},
         '{3'sd1, 3'sd2, 3'sd1}
     };
 
+	// Passthrough Sobel kernel matrix (just gives grayscale).
     assign filt3 = '{
         '{3'sd0, 3'sd0, 3'sd0},
         '{3'sd0, 3'sd1, 3'sd0},
         '{3'sd0, 3'sd0, 3'sd0}
     };
 
+	// Instantiate a Line Buffer to store 2 rows of grayscale pixels.
     Line_Buffer2 	u0	(	.clken(iDVAL),
                             .clock(iCLK),
                             .shiftin(iDATA),
